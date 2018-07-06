@@ -1,17 +1,13 @@
 # PHP FPM
 [![Build Status](https://travis-ci.com/vivamera/docker-hub-php-fpm.svg?branch=master)](https://travis-ci.com/vivamera/docker-hub-php-fpm) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b654009dc2e140839bb6ae5620942810)](https://www.codacy.com/app/vivamera/docker-hub-php-fpm?utm_source=github.com&utm_medium=referral&utm_content=vivamera/docker-hub-php-fpm&utm_campaign=Badge_Grade) 
 
-This is a image for `PHP FPM` witch is based upon `php fpm alpine`.
+This is a image for `PHP FPM` witch is based upon `alpin php fpm`.
 
 This image provides the following extensions:
 - bcmath
 - intl
 - pdo_pgsql
 - xdebug
-
-The image provides configuration for:
-- [php](https://github.com/vivamera/docker-hub-php-fpm/tree/master/7.2/etc/php)
-- [php-fpm](https://github.com/vivamera/docker-hub-php-fpm/tree/master/7.2/etc/php-fpm.d)
 
 ## Supported tags and respective Dockerfile links
 * `7.2`, `latest` [(7.2/Dockerfile)](https://github.com/vivamera/docker-hub-php-fpm/blob/master/7.2/Dockerfile)
@@ -22,6 +18,7 @@ Running an instance:
 ```bash
 $ docker run \
     --name vivamera-php-fpm \
+    --workdir /app \
     --volume "$(pwd)":/app \
     --publish "80:80" \
     --detach \
@@ -30,11 +27,12 @@ $ docker run \
 
 Then you can hit http://localhost or http://host-ip in your browser.
 
-You might want to access the logs from xdebug so you might use the following:
+You might want to access the logs from **xdebug** so you might use the following:
 
 ```bash
 $ docker run \
     --name vivamera-php-fpm \
+    --workdir /app \
     --volume "$(pwd)":/app \
     --volume "$(pwd)/log/xdebug":/var/log/xdebug \
     --publish "80:80" \
@@ -47,26 +45,68 @@ To additionally use communication using sockets use the following:
 ```bash
 $ docker run \
     --name vivamera-php-fpm \
-    --volume "$(pwd)":/app \
+    --workdir /app \
     --volume sock:/sock \
+    --volume "$(pwd)":/app \
     --volume "$(pwd)/log/xdebug":/var/log/xdebug \
     --publish "80:80" \
     --detach \
     vivamera/php-fpm
 ```
 
-This image will be shipped with `xdebug` installed but not enabled. If you want to use xdebug add the environment `USE_XDEBUG` with an boolean value.
+This image will be shipped with `xdebug` installed but not enabled. If you want to use **xdebug** mount an appropriate `ini` file into the container.
 
 ```bash
 $ docker run \
     --name vivamera-php-fpm \
-    --env USE_XDEBUG=1 \
-    --volume "$(pwd)":/app \
+    --workdir /app \
     --volume sock:/sock \
+    --volume "$(pwd)":/app \
     --volume "$(pwd)/log/xdebug":/var/log/xdebug \
+    --volume "$(pwd)/xdebug.ini"::/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini:ro \
     --publish "80:80" \
     --detach \
     vivamera/php-fpm
+```
+
+Example `xdebug.ini`
+```
+zend_extension=xdebug.so
+
+xdebug.profiler_enable_trigger = 1
+xdebug.profiler_output_dir = /var/log/xdebug
+xdebug.remote_autostart = 0
+xdebug.remote_connect_back = 1
+xdebug.remote_enable = 1
+xdebug.remote_handler = dbgp
+xdebug.remote_log = /var/log/xdebug/xdebug.log
+xdebug.remote_mode = req
+xdebug.remote_port = 9000
+```
+
+You might want to execute `php-fpm` using an custom configuration. To do that just mount an appropriate `conf` file into the container.
+
+```bash
+$ docker run \
+    --name vivamera-php-fpm \
+    --workdir /app \
+    --volume sock:/sock \
+    --volume "$(pwd)":/app \
+    --volume "$(pwd)/log/xdebug":/var/log/xdebug \
+    --volume "$(pwd)/zz-docker.conf":/usr/local/etc/php-fpm.d/zz-docker.conf:ro \
+    --publish "80:80" \
+    --detach \
+    vivamera/php-fpm
+```
+
+Example `zz-docker.conf`
+```
+[global]
+daemonize = no
+
+[www]
+listen = /sock/php-fpm.www.sock
+listen.mode = 0666
 ```
 
 ## Quick reference
