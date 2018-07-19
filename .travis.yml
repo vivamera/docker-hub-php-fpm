@@ -5,12 +5,14 @@ services: docker
 env:
   - VERSION=7.2
 
-before_script:
-  - cd "$VERSION"
-  - image="php-fpm:${VERSION}"
-
 script:
-  - docker build --tag "${image}" .
+  - |
+    docker run \
+      --rm \
+      --volume "$(pwd)":/app \
+      --workdir /app \
+      finalgene/hadolint:latest "${VERSION}/Dockerfile" \
+    && docker build --tag "php-fpm:${VERSION}" "${VERSION}"
 
 after_script:
   - docker images
