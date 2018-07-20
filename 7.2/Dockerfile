@@ -1,12 +1,19 @@
-FROM php:7.2-fpm-alpine
+FROM php:7.2-fpm-alpine3.7
 
 ENV XDEBUG_VERSION 2.6.0
 
+# Install phpize build dependencies
+# hadolint ignore=SC2086,DL3018
+RUN apk add --no-cache --virtual .phpize-build-deps \
+    ${PHPIZE_DEPS}
+
 # Install build dependencies
 RUN apk add --no-cache --virtual .build-deps \
-    ${PHPIZE_DEPS} \
-    icu-dev \
-    postgresql-dev
+    bash=4.4.19-r1 \
+    icu-dev=59.1-r1 \
+    postgresql-dev=10.4-r0
+
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Build
 RUN set -xe \
@@ -20,12 +27,15 @@ RUN set -xe \
     && docker-php-ext-enable \
         redis
 
-# Install persistent deps and remove uninstall build deps
-RUN apk add --no-cache --virtual .persistent-deps \
+# Install persistant library dependencies
+# hadolint ignore=SC2046,DL3018
+RUN apk add --no-cache --virtual .persistent-lib-deps \
     $( \
         scanelf --needed --nobanner --format '%n#p' --recursive /usr/local/lib/php/extensions \
         | tr ',' '\n' \
         | sort -u \
         | awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
-    ) \
-    && apk del .build-deps
+    )
+
+# Remove build dependencies
+RUN apk del .phpize-build-deps .build-deps
