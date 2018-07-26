@@ -7,6 +7,7 @@ This image provides the following extensions:
 - bcmath
 - intl
 - pdo_pgsql
+- grpc
 - xdebug
 
 ## Supported tags and respective Dockerfile links
