@@ -1,6 +1,6 @@
 FROM php:7.2-fpm-alpine3.7
 
-ENV XDEBUG_VERSION 2.6.0
+ENV XDEBUG_VERSION 2.6.1
 
 # Install phpize build dependencies
 # hadolint ignore=SC2086,DL3018
