@@ -11,7 +11,7 @@ RUN apk add --no-cache --virtual .phpize-build-deps \
 RUN apk add --no-cache --virtual .build-deps \
     bash=4.4.19-r1 \
     icu-dev=59.1-r1 \
-    postgresql-dev=10.4-r0 \
+    postgresql-dev=10.5-r0 \
     zlib-dev=1.2.11-r1
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
