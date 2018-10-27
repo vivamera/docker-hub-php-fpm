@@ -1,4 +1,4 @@
-FROM php:7.2-fpm-alpine3.7
+FROM php:7.2-fpm-alpine3.8
 
 ENV XDEBUG_VERSION 2.6.1
 
@@ -10,7 +10,7 @@ RUN apk add --no-cache --virtual .phpize-build-deps \
 # Install build dependencies
 RUN apk add --no-cache --virtual .build-deps \
     bash=4.4.19-r1 \
-    icu-dev=59.1-r1 \
+    icu-dev=60.2-r2 \
     postgresql-dev=10.5-r0 \
     zlib-dev=1.2.11-r1
 
@@ -41,4 +41,4 @@ RUN apk add --no-cache --virtual .persistent-lib-deps \
     )
 
 # Remove build dependencies
-RUN apk del .phpize-build-deps .build-deps
+RUN apk del --purge .phpize-build-deps .build-deps
