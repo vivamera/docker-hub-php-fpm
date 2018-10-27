@@ -1,7 +1,7 @@
 # PHP FPM
 [![Build Status](https://travis-ci.com/vivamera/docker-hub-php-fpm.svg?branch=master)](https://travis-ci.com/vivamera/docker-hub-php-fpm) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b654009dc2e140839bb6ae5620942810)](https://www.codacy.com/app/vivamera/docker-hub-php-fpm?utm_source=github.com&utm_medium=referral&utm_content=vivamera/docker-hub-php-fpm&utm_campaign=Badge_Grade) 
 
-This is a image for `PHP FPM` witch is based upon `alpin php fpm`.
+This is a image for `PHP FPM` witch is based upon `alpine php fpm`.
 
 This image provides the following extensions:
 - bcmath
