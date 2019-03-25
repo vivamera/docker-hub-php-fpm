@@ -42,3 +42,5 @@ RUN apk add --no-cache --virtual .persistent-lib-deps \
 
 # Remove build dependencies
 RUN apk del --purge .phpize-build-deps .build-deps
+
+SHELL ["/bin/sh", "-c"]

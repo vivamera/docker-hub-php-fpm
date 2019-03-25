@@ -1,0 +1,36 @@
+version: 2.1
+
+jobs:
+  validate:
+    docker:
+      - image: finalgene/hadolint:latest
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      - run:
+          name: Validate Dockerfile
+          command: hadolint 7.2/Dockerfile
+
+  build:
+    machine: true
+    steps:
+      - checkout
+
+      - run:
+          name: Build application Docker image
+          command: docker build --tag php:7.2 ./7.2
+
+      - run:
+          name: List created images
+          command: docker images
+
+workflows:
+  build:
+    jobs:
+      - validate
+      - build:
+          requires:
+            - validate
